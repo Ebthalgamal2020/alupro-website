@@ -1,3 +1,22 @@
+/* ==========================================================================
+   ALUPRO — CSS BUILD SOURCE
+   This file is the INPUT to the stylesheet build. It is not loaded by the
+   pages directly. The pages load the compiled output:
+
+       assets/css/site.min.css      <- generated, do NOT edit by hand
+
+   After editing this file (or tailwind.config.js) run:  npm run build:css
+
+   The three directives below pull in Tailwind's reset, component and utility
+   layers. Everything after them is ALUPRO's own CSS, which therefore wins over
+   Tailwind utilities of equal specificity — the same cascade order the site
+   had when Tailwind was loaded from the Play CDN.
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==============================================================
    SELF-HOSTED WEBFONTS
    Archivo and Inter are both SIL Open Font Licence, so they are
@@ -173,6 +192,12 @@ textarea:focus-visible {
 }
 .btn-sweep:hover::before,
 .btn-sweep:focus-visible::before { transform: translateY(0); }
+
+/* <picture> is only a wrapper for the WebP/JPEG choice. display:contents keeps
+   it out of the layout tree entirely, so the <img> stays the effective child of
+   its figure and every existing rule (.media img, h-full, w-full, object-cover)
+   applies exactly as it did before the wrappers were added. */
+picture { display: contents; }
 
 /* Media hover: image scales gently inside a fixed frame */
 .media { overflow: hidden; }

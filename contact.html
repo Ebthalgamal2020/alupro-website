@@ -21,6 +21,12 @@
   <meta property="og:url" content="https://ebthalgamal2020.github.io/alupro-website/contact.html" />
   <meta property="og:locale" content="en" />
 
+  <!-- The hero photograph is this page's Largest Contentful Paint element.
+       Preloading it starts the download immediately instead of waiting for the
+       stylesheet to parse and the <picture> to be resolved. Browsers without
+       WebP support ignore this (type mismatch) and use the JPEG fallback. -->
+  <link rel="preload" as="image" href="assets/images/solution-glass-room.webp" type="image/webp" fetchpriority="high" />
+
   <!-- Fonts are self-hosted (see assets/css/alupro.css). Preloading the two
        woff2 files starts them in parallel with the stylesheet instead of
        waiting for a third-party CSS round-trip to reveal them. -->
@@ -70,7 +76,7 @@
       <!-- Logo -->
       <a href="index.html" id="brand" class="block shrink-0 py-4 transition-all duration-500" aria-label="ALUPRO Aluminium Solutions — go to the home page">
         <span class="logo-lockup block w-[124px] sm:w-[142px]">
-          <img src="assets/Alupro-LOGO.jpg" alt="ALUPRO Aluminium Solutions logo" width="1035" height="1035" />
+          <picture><source type="image/webp" srcset="assets/Alupro-LOGO.webp" /><img src="assets/Alupro-LOGO.jpg" alt="ALUPRO Aluminium Solutions logo" width="1035" height="1035" /></picture>
         </span>
       </a>
 
@@ -135,8 +141,8 @@
     <section class="page-hero flex min-h-[68svh] items-end pb-16 pt-36 sm:min-h-[74svh] sm:pb-20 sm:pt-40 lg:pb-24">
 
       <div class="page-hero-media absolute inset-0 -z-10">
-        <img fetchpriority="high" decoding="async" src="assets/images/solution-glass-room.jpg"
-          alt="Corner-glazed aluminium garden room with sliding glass walls on a stone terrace" width="1280" height="854" />
+        <picture><source type="image/webp" srcset="assets/images/solution-glass-room.webp" /><img fetchpriority="high" decoding="async" src="assets/images/solution-glass-room.jpg"
+          alt="Corner-glazed aluminium garden room with sliding glass walls on a stone terrace" width="1280" height="854" /></picture>
         <!-- Scrim: the copy sits at the bottom of this hero, so on mobile the
              white is weighted downward and on desktop it is weighted left —
              black type stays legible while the photograph stays visible. -->
@@ -379,7 +385,7 @@
                on a white plate. The file itself is untouched. -->
           <div class="inline-block bg-white px-4 py-3">
             <span class="logo-lockup block w-[150px]">
-              <img src="assets/Alupro-LOGO.jpg" alt="ALUPRO Aluminium Solutions logo" width="1035" height="1035" loading="lazy" />
+              <picture><source type="image/webp" srcset="assets/Alupro-LOGO.webp" /><img src="assets/Alupro-LOGO.jpg" alt="ALUPRO Aluminium Solutions logo" width="1035" height="1035" loading="lazy" /></picture>
             </span>
           </div>
           <p class="mt-7 max-w-sm text-sm leading-relaxed text-white/55">
@@ -467,7 +473,8 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- Minified build of script.js (the readable source). Rebuild: npm run build:js -->
+  <script src="script.min.js" defer></script>
 </body>
 
 </html>

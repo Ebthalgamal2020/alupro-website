@@ -1,0 +1,16 @@
+{
+  "name": "alupro-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ALUPRO Aluminium Solutions \u2014 static site. Tailwind is compiled ahead of time; the published site is plain HTML/CSS/JS with no runtime dependencies.",
+  "scripts": {
+    "build:css": "tailwindcss -i assets/css/alupro.css -o assets/css/site.min.css --minify",
+    "build:js": "terser script.js -c -m --comments false -o script.min.js",
+    "build": "npm run build:css && npm run build:js",
+    "watch:css": "tailwindcss -i assets/css/alupro.css -o assets/css/site.min.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "terser": "^5.50.0"
+  }
+}

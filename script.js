@@ -60,8 +60,15 @@
   var brand = $('#brand');
   var progress = $('#scrollProgress');
 
-  function updateHeader() {
-    var y = window.scrollY || document.documentElement.scrollTop;
+  // Every scroll-driven function below takes its layout values as arguments so
+  // the frame callback can do ALL its reads first and ALL its writes after.
+  // Reading layout (scrollHeight, getBoundingClientRect, innerWidth) *after* a
+  // style write forces a synchronous re-layout; interleaving them the way this
+  // used to made the browser recalculate the whole page several times a frame.
+  // Called with no arguments the functions still read for themselves, so the
+  // one-off calls elsewhere (menu close, initial paint) are unchanged.
+  function updateHeader(y, docH, viewH) {
+    if (y === undefined) y = window.scrollY || document.documentElement.scrollTop;
 
     if (header) {
       if (y > 40) {
@@ -81,8 +88,9 @@
 
     // Thin red progress bar across the top of the viewport.
     if (progress) {
-      var doc = document.documentElement;
-      var max = (doc.scrollHeight - window.innerHeight) || 1;
+      if (docH === undefined) docH = document.documentElement.scrollHeight;
+      if (viewH === undefined) viewH = window.innerHeight;
+      var max = (docH - viewH) || 1;
       var pct = Math.min(100, Math.max(0, (y / max) * 100));
       progress.style.width = pct + '%';
     }
@@ -273,11 +281,11 @@
   var timeline = $('#timeline');
   var timelineFill = $('#timelineFill');
 
-  function updateTimeline() {
+  function updateTimeline(rect, viewH) {
     if (!timeline || !timelineFill) return;
 
-    var rect = timeline.getBoundingClientRect();
-    var viewH = window.innerHeight;
+    if (rect === undefined) rect = timeline.getBoundingClientRect();
+    if (viewH === undefined) viewH = window.innerHeight;
 
     // 0 when the section top reaches the middle of the screen,
     // 1 once the section bottom has passed it.
@@ -296,14 +304,16 @@
 
   var heroImg = $('#heroImg');
 
-  function updateParallax() {
+  function updateParallax(y, viewW, viewH) {
     if (!heroImg || reduceMotion) return;
-    if (window.innerWidth < 768) {           // skip on small screens
+    if (viewW === undefined) viewW = window.innerWidth;
+    if (viewW < 768) {                       // skip on small screens
       heroImg.style.transform = '';
       return;
     }
-    var y = window.scrollY;
-    if (y > window.innerHeight) return;      // stop once the hero is offscreen
+    if (y === undefined) y = window.scrollY;
+    if (viewH === undefined) viewH = window.innerHeight;
+    if (y > viewH) return;                   // stop once the hero is offscreen
     heroImg.style.transform = 'translate3d(0,' + (y * 0.16).toFixed(2) + 'px,0)';
   }
 
@@ -464,7 +474,11 @@
       if (!img || !lbImage) return;
 
       lbReturnFocus = trigger;
-      lbImage.src = img.getAttribute('src');
+      // currentSrc is whichever source the <picture> actually resolved to (the
+      // WebP on modern browsers, the JPEG fallback otherwise). Using it means
+      // the lightbox reuses the file already in cache instead of pulling down a
+      // second copy in the other format.
+      lbImage.src = img.currentSrc || img.getAttribute('src');
       lbImage.alt = img.getAttribute('alt') || '';
       if (lbTitle) lbTitle.textContent = trigger.getAttribute('data-title') || '';
       if (lbMeta) lbMeta.textContent = trigger.getAttribute('data-meta') || '';
@@ -562,9 +576,17 @@
      ------------------------------------------------------------------ */
 
   var onScroll = onFrame(function () {
-    updateHeader();
-    updateTimeline();
-    updateParallax();
+    // ---- READ PHASE: every layout query happens here, before any write ----
+    var y = window.scrollY || document.documentElement.scrollTop;
+    var viewH = window.innerHeight;
+    var viewW = window.innerWidth;
+    var docH = document.documentElement.scrollHeight;
+    var tlRect = (timeline && timelineFill) ? timeline.getBoundingClientRect() : undefined;
+
+    // ---- WRITE PHASE: styles and classes only, no further layout reads ----
+    updateHeader(y, docH, viewH);
+    if (tlRect) updateTimeline(tlRect, viewH);
+    updateParallax(y, viewW, viewH);
   });
 
   window.addEventListener('scroll', onScroll, { passive: true });

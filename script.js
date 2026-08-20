@@ -9,12 +9,17 @@
    3.  Mobile menu
    4.  Smooth scrolling for in-page links
    5.  Scroll reveal (IntersectionObserver)
-   6.  Active nav link (scrollspy)
-   7.  Project filtering
-   8.  Process timeline progress
-   9.  Hero parallax
-   10. Contact form validation
-   11. Footer year + back to top
+   6.  Active nav link (current page)
+   7.  Process timeline progress
+   8.  Hero parallax + inner page hero reveal
+   9.  Contact form validation
+   10. Project filtering
+   11. Project lightbox
+   12. Footer year + back to top
+
+   The same file is loaded by every page. Each block checks that the
+   markup it drives is actually present, so nothing runs where it does
+   not belong.
    ========================================================================== */
 
 (function () {
@@ -233,72 +238,35 @@
   }
 
   /* ------------------------------------------------------------------
-     6. ACTIVE NAV LINK (SCROLLSPY)
-     Highlights the nav item for whichever section is currently in view.
+     6. ACTIVE NAV LINK (CURRENT PAGE)
+     The site is now a set of pages rather than one long scroll, so the
+     indicator marks the page you are on instead of the section you have
+     scrolled to. Works from a web server and from a bare file:// path.
      ------------------------------------------------------------------ */
 
-  var navLinks = $$('.nav-link');
+  function currentPage() {
+    var file = window.location.pathname.split('/').pop();
+    return (!file || file === '/') ? 'index.html' : file.toLowerCase();
+  }
 
-  // Sorted by position in the DOCUMENT, not by nav order — the loop below
-  // takes the last section that starts above the reading line, so the list
-  // has to run top-to-bottom. (Nav order differs: "About" is listed after
-  // "Solutions" but sits earlier on the page.)
-  var sections = navLinks
-    .map(function (link) { return document.querySelector(link.getAttribute('href')); })
-    .filter(Boolean)
-    .sort(function (a, b) { return a.offsetTop - b.offsetTop; });
+  function markActiveNav() {
+    var here = currentPage();
 
-  function updateActiveNav() {
-    var pos = window.scrollY + HEADER_OFFSET + 40;
-    var currentId = null;
+    $$('.nav-link, .menu-item[href]').forEach(function (link) {
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) === '#') return;               // in-page jump, never "active"
 
-    sections.forEach(function (section) {
-      if (section.offsetTop <= pos) currentId = '#' + section.id;
-    });
+      var target = href.split('#')[0].split('/').pop().toLowerCase();
+      if (!target) target = 'index.html';
 
-    // At the very bottom, force the last section to win.
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
-      var last = sections[sections.length - 1];
-      if (last) currentId = '#' + last.id;
-    }
-
-    navLinks.forEach(function (link) {
-      link.classList.toggle('is-active', link.getAttribute('href') === currentId);
+      link.classList.toggle('is-active', target === here);
     });
   }
 
-  /* ------------------------------------------------------------------
-     7. PROJECT FILTERING
-     Filters the project grid by the data-category attribute.
-     ------------------------------------------------------------------ */
-
-  var filterButtons = $$('.filter-btn');
-  var projectCards = $$('.proj-card');
-  var noProjects = $('#noProjects');
-
-  filterButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var filter = btn.getAttribute('data-filter');
-
-      filterButtons.forEach(function (b) {
-        var active = b === btn;
-        b.classList.toggle('is-active', active);
-        b.setAttribute('aria-pressed', String(active));
-      });
-
-      var visible = 0;
-      projectCards.forEach(function (card) {
-        var match = filter === 'all' || card.getAttribute('data-category') === filter;
-        card.classList.toggle('is-hidden', !match);
-        if (match) visible++;
-      });
-
-      if (noProjects) noProjects.classList.toggle('hidden', visible > 0);
-    });
-  });
+  markActiveNav();
 
   /* ------------------------------------------------------------------
-     8. PROCESS TIMELINE PROGRESS
+     7. PROCESS TIMELINE PROGRESS
      Fills the vertical rail in red as the section scrolls past.
      ------------------------------------------------------------------ */
 
@@ -321,7 +289,7 @@
   }
 
   /* ------------------------------------------------------------------
-     9. HERO PARALLAX
+     8. HERO PARALLAX
      The hero artwork drifts slightly slower than the page. The image is
      rendered 112% tall so there is room to move without exposing edges.
      ------------------------------------------------------------------ */
@@ -340,7 +308,21 @@
   }
 
   /* ------------------------------------------------------------------
-     10. CONTACT FORM VALIDATION
+     8b. INNER PAGE HERO REVEAL
+     The hero photograph on solutions / projects / about / contact
+     starts a fraction oversized and settles back to 1:1 on load, which
+     matches the slow image motion used everywhere else on the site.
+     ------------------------------------------------------------------ */
+
+  var pageHero = $('.page-hero');
+  if (pageHero) {
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () { pageHero.classList.add('is-ready'); });
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     9. CONTACT FORM VALIDATION
      Front-end validation only.
      NOTE: the form is not connected to a backend or email service yet,
      so nothing is actually sent. To make it live, post `data` below to
@@ -417,7 +399,151 @@
   }
 
   /* ------------------------------------------------------------------
-     11. FOOTER YEAR + BACK TO TOP
+     10. PROJECT FILTERING
+     Buttons carry data-filter, cards carry data-category. "all" shows
+     everything. Cards are hidden rather than removed so the reveal
+     animation state survives switching back and forth.
+     ------------------------------------------------------------------ */
+
+  var filterButtons = $$('.filter-btn');
+  var projectCards = $$('.proj-card');
+  var filterCount = $('#filterCount');
+
+  function applyFilter(value) {
+    var shown = 0;
+
+    projectCards.forEach(function (card) {
+      var category = card.getAttribute('data-category') || '';
+      var match = value === 'all' || category === value;
+      card.classList.toggle('is-hidden', !match);
+      if (match) {
+        shown++;
+        // A card revealed for the first time while filtered still needs its
+        // entrance state cleared, otherwise it would sit at opacity 0.
+        card.classList.add('is-visible');
+      }
+    });
+
+    if (filterCount) {
+      filterCount.textContent = shown === 1 ? '1 project' : shown + ' projects';
+    }
+  }
+
+  if (filterButtons.length && projectCards.length) {
+    filterButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        filterButtons.forEach(function (b) {
+          b.classList.toggle('is-active', b === button);
+          b.setAttribute('aria-pressed', String(b === button));
+        });
+        applyFilter(button.getAttribute('data-filter') || 'all');
+      });
+    });
+
+    applyFilter('all');
+  }
+
+  /* ------------------------------------------------------------------
+     11. PROJECT LIGHTBOX
+     There are no individual project pages yet, so "View project" opens
+     the photograph at full size instead of routing somewhere empty.
+     ------------------------------------------------------------------ */
+
+  var lightbox = $('#lightbox');
+
+  if (lightbox) {
+    var lbImage = $('#lightboxImage');
+    var lbTitle = $('#lightboxTitle');
+    var lbMeta = $('#lightboxMeta');
+    var lbClose = $('#lightboxClose');
+    var lbReturnFocus = null;
+    var lbScrollY = 0;
+
+    function openLightbox(trigger) {
+      var img = $('img', trigger);
+      if (!img || !lbImage) return;
+
+      lbReturnFocus = trigger;
+      lbImage.src = img.getAttribute('src');
+      lbImage.alt = img.getAttribute('alt') || '';
+      if (lbTitle) lbTitle.textContent = trigger.getAttribute('data-title') || '';
+      if (lbMeta) lbMeta.textContent = trigger.getAttribute('data-meta') || '';
+
+      lbScrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + lbScrollY + 'px';
+      document.body.style.width = '100%';
+
+      lightbox.classList.add('is-open');
+      lightbox.removeAttribute('inert');
+
+      // The panel is visibility:hidden until .is-open is applied, and a hidden
+      // element cannot take focus. rAF callbacks run *before* the style recalc
+      // for that frame, so the move has to wait for the frame after it.
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          if (lbClose) lbClose.focus();
+        });
+      });
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('inert', '');
+
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, lbScrollY);
+
+      if (lbReturnFocus) lbReturnFocus.focus();
+      lbReturnFocus = null;
+    }
+
+    $$('[data-lightbox]').forEach(function (trigger) {
+      trigger.addEventListener('click', function (e) {
+        e.preventDefault();
+        openLightbox(trigger);
+      });
+    });
+
+    if (lbClose) lbClose.addEventListener('click', closeLightbox);
+
+    // Clicking the dark surround closes; clicking the picture does not.
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (!lightbox.classList.contains('is-open')) return;
+
+      if (e.key === 'Escape') {
+        closeLightbox();
+        return;
+      }
+
+      // Keep Tab inside the dialog rather than letting it walk the page behind.
+      if (e.key === 'Tab') {
+        var focusable = $$('button, [href], input, select, textarea', lightbox)
+          .filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+        if (!focusable.length) return;
+
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     12. FOOTER YEAR + BACK TO TOP
      ------------------------------------------------------------------ */
 
   var yearEl = $('#year');
@@ -437,7 +563,6 @@
 
   var onScroll = onFrame(function () {
     updateHeader();
-    updateActiveNav();
     updateTimeline();
     updateParallax();
   });
@@ -448,6 +573,5 @@
 
   // Initial paint.
   updateHeader();
-  updateActiveNav();
   updateTimeline();
 })();

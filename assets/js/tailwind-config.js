@@ -18,7 +18,7 @@ tailwind.config = {
       // Numeric weight utilities (font-400 … font-800) to match the loaded fonts
       fontWeight: { 400: '400', 500: '500', 600: '600', 700: '700', 800: '800' },
       maxWidth: {
-        shell: '1400px',     // standard page shell (header, footer, all pages)
+        shell: '1760px',     // standard page shell (header, footer, all pages)
         gallery: '1760px',   // wider shell used by the Projects page imagery
       },
     },

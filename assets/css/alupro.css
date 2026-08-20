@@ -1,4 +1,38 @@
 /* ==============================================================
+   SELF-HOSTED WEBFONTS
+   Archivo and Inter are both SIL Open Font Licence, so they are
+   served from this origin instead of fonts.googleapis.com. That
+   removes a render-blocking third-party stylesheet and the extra
+   DNS + TLS handshake that had to finish before the font files
+   could even be discovered.
+
+   Both files are the *variable* latin subset — one file per family
+   covers every weight the site uses (400-800), which is exactly what
+   Google was serving. Only the latin subset is included because the
+   only non-ASCII characters on the site are "ç" and "—", both of
+   which it covers.
+
+   font-display: swap matches the previous behaviour exactly.
+   ============================================================== */
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('../fonts/archivo-latin-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-latin-var.woff2') format('woff2');
+}
+
+/* ==============================================================
    ALUPRO — custom CSS
    Only what Tailwind cannot express cleanly lives here:
    brand tokens, the logo framing, and the motion system.

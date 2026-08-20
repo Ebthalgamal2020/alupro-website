@@ -21,20 +21,18 @@
   <meta property="og:url" content="https://ebthalgamal2020.github.io/alupro-website/solutions.html" />
   <meta property="og:locale" content="en" />
 
-  <!-- Google Fonts: Archivo (display) + Inter (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
+  <!-- Fonts are self-hosted (see assets/css/alupro.css). Preloading the two
+       woff2 files starts them in parallel with the stylesheet instead of
+       waiting for a third-party CSS round-trip to reveal them. -->
+  <link rel="preload" href="assets/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- Tailwind CSS (Play CDN — no build step required) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- ALUPRO design tokens (shared by every page) -->
-  <script src="assets/js/tailwind-config.js"></script>
-
-  <!-- ALUPRO custom CSS (shared by every page) -->
-  <link rel="stylesheet" href="assets/css/alupro.css" />
+  <!-- ALUPRO stylesheet — Tailwind (compiled from tailwind.config.js) plus the
+       site's custom CSS, built to a single minified file. This replaces the
+       Tailwind Play CDN, which shipped ~124 KiB of JavaScript and generated the
+       same CSS in the browser on every page load. Rebuild with: npm run build:css
+       Sources: assets/css/alupro.css + tailwind.config.js -->
+  <link rel="stylesheet" href="assets/css/site.min.css" />
   <!-- Without JavaScript nothing adds .is-visible, so the reveal animation
        would leave the page blank. This shows everything immediately instead. -->
   <noscript>
@@ -67,7 +65,7 @@
        ============================================================ -->
   <header id="header"
     class="fixed inset-x-0 top-0 z-[75] border-b border-transparent bg-white/80 backdrop-blur-md transition-all duration-500">
-    <div class="mx-auto flex max-w-shell items-center justify-between gap-6 px-6 sm:px-8 lg:px-12 xl:px-14">
+    <div class="mx-auto flex max-w-shell items-center justify-between gap-6 px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
 
       <!-- Logo -->
       <a href="index.html" id="brand" class="block shrink-0 py-4 transition-all duration-500" aria-label="ALUPRO Aluminium Solutions — go to the home page">
@@ -147,7 +145,7 @@
         <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white to-transparent"></div>
       </div>
 
-      <div class="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="max-w-4xl" data-reveal>
 
           <!-- Breadcrumb -->
@@ -181,7 +179,7 @@
          A quick way into the page, and a map of what is on it.
          ========================================================== -->
     <section class="border-y border-ink/10 bg-mist py-12 md:py-14">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5" data-reveal>
           <a href="#sliding-doors" class="group flex items-baseline gap-4 border-t border-ink/12 pt-5 transition-colors duration-500 hover:border-red">
             <span class="font-display text-[12px] font-700 tracking-[0.18em] text-red">01</span>
@@ -209,7 +207,7 @@
 
     <!-- ---------- 01 Sliding Doors &amp; Windows ---------- -->
     <section id="sliding-doors" class="group bg-white py-24 md:py-28 lg:py-36">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
 
           <figure class="media relative aspect-[4/3] w-full bg-mist lg:col-span-6 lg:aspect-[5/4] " data-reveal>
@@ -267,7 +265,7 @@
 
     <!-- ---------- 02 Glass Rooms ---------- -->
     <section id="glass-rooms" class="group bg-mist py-24 md:py-28 lg:py-36">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
 
           <figure class="media relative aspect-[4/3] w-full bg-mist lg:col-span-6 lg:aspect-[5/4] lg:order-2" data-reveal>
@@ -325,7 +323,7 @@
 
     <!-- ---------- 03 Pergolas ---------- -->
     <section id="pergolas" class="group bg-white py-24 md:py-28 lg:py-36">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
 
           <figure class="media relative aspect-[4/3] w-full bg-mist lg:col-span-6 lg:aspect-[5/4] " data-reveal>
@@ -383,7 +381,7 @@
 
     <!-- ---------- 04 Architectural Façades ---------- -->
     <section id="facades" class="group bg-ink text-white py-24 md:py-28 lg:py-36">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
 
           <figure class="media relative aspect-[4/3] w-full bg-ink-800 lg:col-span-6 lg:aspect-[5/4] lg:order-2" data-reveal>
@@ -443,7 +441,7 @@
          05 — OTHER ALUMINIUM SYSTEMS
          ========================================================== -->
     <section id="other-systems" class="bg-mist py-24 md:py-32 lg:py-40">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
 
         <div class="mb-14 flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div>
@@ -524,7 +522,7 @@
         <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/88 to-ink/30"></div>
       </div>
 
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="max-w-3xl">
           <span class="mb-8 block h-[3px] w-20 bg-red" data-reveal aria-hidden="true"></span>
 
@@ -557,7 +555,7 @@
        FOOTER — identical on every page
        ========================================================== -->
   <footer class="bg-ink text-white">
-    <div class="mx-auto max-w-shell px-6 py-16 sm:px-8 md:py-20 lg:px-12 xl:px-14">
+    <div class="mx-auto max-w-shell px-6 py-16 sm:px-8 md:py-20 lg:px-12 xl:px-14 2xl:px-16">
 
       <div class="grid gap-12 md:grid-cols-12">
 

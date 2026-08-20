@@ -21,20 +21,18 @@
   <meta property="og:url" content="https://ebthalgamal2020.github.io/alupro-website/contact.html" />
   <meta property="og:locale" content="en" />
 
-  <!-- Google Fonts: Archivo (display) + Inter (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
+  <!-- Fonts are self-hosted (see assets/css/alupro.css). Preloading the two
+       woff2 files starts them in parallel with the stylesheet instead of
+       waiting for a third-party CSS round-trip to reveal them. -->
+  <link rel="preload" href="assets/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- Tailwind CSS (Play CDN — no build step required) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- ALUPRO design tokens (shared by every page) -->
-  <script src="assets/js/tailwind-config.js"></script>
-
-  <!-- ALUPRO custom CSS (shared by every page) -->
-  <link rel="stylesheet" href="assets/css/alupro.css" />
+  <!-- ALUPRO stylesheet — Tailwind (compiled from tailwind.config.js) plus the
+       site's custom CSS, built to a single minified file. This replaces the
+       Tailwind Play CDN, which shipped ~124 KiB of JavaScript and generated the
+       same CSS in the browser on every page load. Rebuild with: npm run build:css
+       Sources: assets/css/alupro.css + tailwind.config.js -->
+  <link rel="stylesheet" href="assets/css/site.min.css" />
   <!-- Without JavaScript nothing adds .is-visible, so the reveal animation
        would leave the page blank. This shows everything immediately instead. -->
   <noscript>
@@ -67,7 +65,7 @@
        ============================================================ -->
   <header id="header"
     class="fixed inset-x-0 top-0 z-[75] border-b border-transparent bg-white/80 backdrop-blur-md transition-all duration-500">
-    <div class="mx-auto flex max-w-shell items-center justify-between gap-6 px-6 sm:px-8 lg:px-12 xl:px-14">
+    <div class="mx-auto flex max-w-shell items-center justify-between gap-6 px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
 
       <!-- Logo -->
       <a href="index.html" id="brand" class="block shrink-0 py-4 transition-all duration-500" aria-label="ALUPRO Aluminium Solutions — go to the home page">
@@ -147,7 +145,7 @@
         <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white to-transparent"></div>
       </div>
 
-      <div class="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="max-w-4xl" data-reveal>
 
           <!-- Breadcrumb -->
@@ -180,7 +178,7 @@
          CONTACT DETAILS + FORM
          ========================================================== -->
     <section class="bg-white py-24 md:py-32 lg:py-40">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
 
           <!-- Left: confirmed details only -->
@@ -339,7 +337,7 @@
          past the form. No new information is introduced here.
          ========================================================== -->
     <section class="bg-ink py-20 text-white md:py-24">
-      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14">
+      <div class="mx-auto max-w-shell px-6 sm:px-8 lg:px-12 xl:px-14 2xl:px-16">
         <div class="grid gap-10 md:grid-cols-12 md:items-center">
 
           <div class="md:col-span-7">
@@ -371,7 +369,7 @@
        FOOTER — identical on every page
        ========================================================== -->
   <footer class="bg-ink text-white">
-    <div class="mx-auto max-w-shell px-6 py-16 sm:px-8 md:py-20 lg:px-12 xl:px-14">
+    <div class="mx-auto max-w-shell px-6 py-16 sm:px-8 md:py-20 lg:px-12 xl:px-14 2xl:px-16">
 
       <div class="grid gap-12 md:grid-cols-12">
 
